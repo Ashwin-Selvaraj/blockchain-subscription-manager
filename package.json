@@ -1,0 +1,35 @@
+{
+  "name": "blockchain-subscription-manager",
+  "version": "1.0.0",
+  "description": "A smart contract system for managing recurring subscription payments, including plan creation, user subscriptions, automated renewals, and payment tracking. Built with Solidity for blockchain-based subscription management.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashwin-Selvaraj/blockchain-subscription-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ashwin-Selvaraj/blockchain-subscription-manager/issues"
+  },
+  "homepage": "https://github.com/Ashwin-Selvaraj/blockchain-subscription-manager#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^3.0.5",
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.1",
+    "@types/chai": "^4.3.20",
+    "@types/chai-as-promised": "^8.0.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.0",
+    "chai": "^5.3.3",
+    "ethers": "^6.15.0",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "hardhat": "^3.0.13",
+    "mocha": "^11.7.5",
+    "typescript": "~5.8.0"
+  },
+  "type": "module"
+}
