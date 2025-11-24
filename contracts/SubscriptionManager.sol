@@ -37,6 +37,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20;
 
     struct Plan {
+        string name; // human readable label
         uint256 priceUsd; // price in USD with usdPrecision (eg 2 decimal -> 100 => $1.00 if precision=2)
         uint256 duration; // subscription duration in seconds (e.g., 30 days)
         bool active;
@@ -51,8 +52,8 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     address public treasury; // where funds are forwarded
 
     // events
-    event PlanCreated(uint256 indexed planId, uint256 priceUsd, uint256 duration);
-    event PlanUpdated(uint256 indexed planId, uint256 priceUsd, uint256 duration, bool active);
+    event PlanCreated(uint256 indexed planId, string name, uint256 priceUsd, uint256 duration);
+    event PlanUpdated(uint256 indexed planId, string name, uint256 priceUsd, uint256 duration, bool active);
     event SubscriptionPaid(
         address indexed payer,
         address indexed user,
@@ -84,15 +85,25 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         emit TreasuryUpdated(t);
     }
 
-    function createPlan(uint256 planId, uint256 priceUsd, uint256 duration) external onlyOwner {
+    function createPlan(uint256 planId, string calldata name, uint256 priceUsd, uint256 duration) external onlyOwner {
         require(duration > 0, "duration=0");
-        plans[planId] = Plan({priceUsd: priceUsd, duration: duration, active: true});
-        emit PlanCreated(planId, priceUsd, duration);
+        require(bytes(name).length > 0, "name empty");
+        plans[planId] = Plan({name: name, priceUsd: priceUsd, duration: duration, active: true});
+        emit PlanCreated(planId, name, priceUsd, duration);
     }
 
-    function updatePlan(uint256 planId, uint256 priceUsd, uint256 duration, bool active) external onlyOwner {
-        plans[planId] = Plan({priceUsd: priceUsd, duration: duration, active: active});
-        emit PlanUpdated(planId, priceUsd, duration, active);
+    function updatePlan(
+        uint256 planId,
+        string calldata name,
+        uint256 priceUsd,
+        uint256 duration,
+        bool active
+    ) external onlyOwner {
+        require(bytes(plans[planId].name).length > 0, "plan not found");
+        require(duration > 0, "duration=0");
+        require(bytes(name).length > 0, "name empty");
+        plans[planId] = Plan({name: name, priceUsd: priceUsd, duration: duration, active: active});
+        emit PlanUpdated(planId, name, priceUsd, duration, active);
     }
 
     function setAcceptedToken(address token, bool accept, address priceFeed) external onlyOwner {
@@ -240,7 +251,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     }
 
     // Non-view helper used in payable flow (simple wrapper)
-    function _usdToTokenAmount(uint256 priceUsd, address token) internal returns (uint256) {
+    function _usdToTokenAmount(uint256 priceUsd, address token) internal view returns (uint256) {
         return _usdToTokenAmountView(priceUsd, token);
     }
 
