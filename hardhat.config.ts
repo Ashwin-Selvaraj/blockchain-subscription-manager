@@ -1,5 +1,6 @@
 import { defineConfig, configVariable } from "hardhat/config";
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
+import hardhatVerifyPlugin from "@nomicfoundation/hardhat-verify";
 
 export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
