@@ -8,6 +8,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node16",
+    "types": ["node", "hardhat"],
+    "resolveJsonModule": true,
     "outDir": "dist"
-  }
+  },
+  "include": ["hardhat.config.ts", "ignition", "scripts", "test", "types"]
 }

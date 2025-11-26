@@ -4,7 +4,8 @@
   "description": "A smart contract system for managing recurring subscription payments, including plan creation, user subscriptions, automated renewals, and payment tracking. Built with Solidity for blockchain-based subscription management.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "npx hardhat ignition deploy ./ignition/modules/deploy.ts"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0"
+    "@openzeppelin/contracts": "^5.4.0",
+    "dotenv": "^17.2.3"
   }
 }
