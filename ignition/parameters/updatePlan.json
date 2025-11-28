@@ -1,0 +1,11 @@
+{
+  "UpdatePlanModule": {
+    "contractAddress": "0x427d03a9e233752018D6e7a479fA9E5De8f643e3",
+    "planId": 0,
+    "name": "Pro",
+    "priceUsd": 200,
+    "duration": 2592000,
+    "active": true
+  }
+}
+
