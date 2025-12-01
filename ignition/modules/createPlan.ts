@@ -18,7 +18,7 @@ const CreatePlanModule = buildModule("CreatePlanModule", (m) => {
 export default CreatePlanModule;
 
 
-// comment for running the module
+// comment for running the module 
 // npx hardhat ignition deploy ./ignition/modules/createPlan.ts \
 //   --parameters ignition/parameters/createPlan.json \
 //   --network bscTestnet
