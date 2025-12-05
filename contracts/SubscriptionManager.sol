@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 interface IAggregatorV3 {
     // minimal Chainlink interface used here
@@ -194,6 +195,21 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         return _usdToTokenAmountView(plan.priceUsd, token);
     }
 
+    function hasActiveSubscription(address user, uint256 planId) external view returns (bool) {
+        return expiresAt[user][planId] >= block.timestamp;
+    }
+
+    function claimFreePlan(uint256 planId) external whenNotPaused nonReentrant {
+        Plan memory plan = plans[planId];
+        require(plan.active, "plan not active");
+        require(plan.priceUsd == 0, "plan not free");
+        require(expiresAt[msg.sender][planId] == 0, "already claimed");
+
+        _extendExpiry(msg.sender, planId, plan.duration);
+
+        emit SubscriptionPaid(msg.sender, msg.sender, planId, address(0), 0, bytes32(0), expiresAt[msg.sender][planId]);
+    }
+
     function isActive(uint256 planId) external view returns (bool) {
         return plans[planId].active;
     }
@@ -210,7 +226,10 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
 
     // INTERNAL view version: does not modify state
     function _usdToTokenAmountView(uint256 priceUsd, address token) internal view returns (uint256) {
-        // priceUsd is stored with usdDecimals precision
+        if (priceUsd == 0) {
+            return 0;
+        }
+
         address feed = tokenPriceFeed[token];
         require(feed != address(0), "price feed not set");
         IAggregatorV3 aggregator = IAggregatorV3(feed);
@@ -219,40 +238,28 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         require(updatedAt > block.timestamp - 1 days, "stale feed");
 
         uint8 feedDecimals = aggregator.decimals();
+        uint8 tokenDecimals = _tokenDecimals(token);
 
-        /**
-         * Calculation:
-         * - priceUsd: e.g., if usdDecimals=8, priceUsd=100000000 = $1.00000000
-         * - answer: price of token in USD with feedDecimals (eg ETH/USD = 2500.00000000 with feedDecimals=8)
-         * We want tokenAmount = (priceUsd * (10**tokenDecimals?) ) / answer
-         *
-         * For simplicity we will return tokenAmount in raw token base units where "token" is the native or ERC20 with 18 decimals.
-         * The frontend must know token decimals and can compute exact result if needed.
-         *
-         * To keep this beginner contract simple and avoid assuming token decimals, we will:
-         * - return tokenAmount scaled to 1e18 units (so the result is tokenAmount * 1e18).
-         * - frontend should divide by 1e18 and then adjust for actual token decimals.
-         *
-         * This is a simplification; for production you should include token decimals explicitly.
-         */
+        uint256 numerator = uint256(priceUsd) * _pow10(feedDecimals + tokenDecimals);
+        uint256 denominator = uint256(answer) * _pow10(usdDecimals);
 
-        // Convert everything to 1e18 scale:
-        // tokenAmountScaled = priceUsd * 1e18 / answer
-        uint256 numerator = uint256(priceUsd) * (10**18);
-        uint256 denom = uint256(answer); // answer already contains feedDecimals
-        // adjust for decimals difference (usdDecimals vs feedDecimals)
-        if (feedDecimals > usdDecimals) {
-            denom = denom / (10**(feedDecimals - usdDecimals));
-        } else if (usdDecimals > feedDecimals) {
-            // scale numerator up
-            numerator = numerator * (10**(usdDecimals - feedDecimals));
-        }
-        return (numerator / denom);
+        return numerator / denominator;
     }
 
     // Non-view helper used in payable flow (simple wrapper)
     function _usdToTokenAmount(uint256 priceUsd, address token) internal view returns (uint256) {
         return _usdToTokenAmountView(priceUsd, token);
+    }
+
+    function _tokenDecimals(address token) internal view returns (uint8) {
+        if (token == address(0)) {
+            return 18;
+        }
+        return IERC20Metadata(token).decimals();
+    }
+
+    function _pow10(uint256 exp) internal pure returns (uint256) {
+        return 10**exp;
     }
 
     // ------------------
