@@ -27,3 +27,7 @@ export default buildModule("SubscriptionManagerModule", (m) => {
 
   return { subscriptionManager };
 });
+
+
+//deploy command
+//npm run deploy -- --network bscTestnet
