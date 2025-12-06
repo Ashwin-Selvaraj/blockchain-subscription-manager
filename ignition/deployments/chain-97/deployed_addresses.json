@@ -1,5 +1,3 @@
 {
-  "SubscriptionManagerModule#SubscriptionManager": "0xeE8c9101d4082F9ea3fC0881067045F4C72a07f3",
-  "CreatePlanModule#SubscriptionManager": "0xeE8c9101d4082F9ea3fC0881067045F4C72a07f3",
-  "SetAcceptedTokenModule#SubscriptionManager": "0xeE8c9101d4082F9ea3fC0881067045F4C72a07f3"
+  "CreatePlanModule#SubscriptionManager": "0xeE8c9101d4082F9ea3fC0881067045F4C72a07f3"
 }
