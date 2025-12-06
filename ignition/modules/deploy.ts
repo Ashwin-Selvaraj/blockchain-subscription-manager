@@ -31,3 +31,8 @@ export default buildModule("SubscriptionManagerModule", (m) => {
 
 //deploy command
 //npm run deploy -- --network bscTestnet
+
+
+
+//verification command
+//npx hardhat verify --network bscTestnet 0xeE8c9101d4082F9ea3fC0881067045F4C72a07f3 "0x2d07599e277c9f311Bfec4dB0e22cC4751Dd679B"
