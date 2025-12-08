@@ -6,9 +6,12 @@ const PayWithNativeModule = buildModule("PayWithNativeModule", (m) => {
   const invoiceId = m.getParameter("invoiceId");
   const user = m.getParameter("user");
   const nativeToken = m.getParameter("nativeToken");
-
   const contract = m.contractAt("SubscriptionManager", contractAddress);
-  m.call(contract, "payWithNative", [user, planId, invoiceId, nativeToken]);
+
+  // Fetch required native amount on-chain at deploy time
+  const required = m.staticCall(contract, "getTokenAmountForPlan", [planId, nativeToken]);
+
+  m.call(contract, "payWithNative", [user, planId, invoiceId, nativeToken], { value: required });
   return { contract };
 });
   
