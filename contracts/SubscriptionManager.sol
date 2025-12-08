@@ -87,6 +87,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     }
 
     function createPlan(uint256 planId, string calldata name, uint256 priceUsd, uint256 duration) external onlyOwner {
+        require(bytes(plans[planId].name).length == 0, "plan already exists");
         require(duration > 0, "duration=0");
         require(bytes(name).length > 0, "name empty");
         plans[planId] = Plan({name: name, priceUsd: priceUsd, duration: duration, active: true});
@@ -155,11 +156,16 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
      * - payable function: frontend must compute required native token amount using price feed for native token
      * - invoiceId helps reconcile txs.
      */
-    function payWithNative(address user, uint256 planId, bytes32 invoiceId) external payable nonReentrant whenNotPaused {
+    function payWithNative(
+        address user,
+        uint256 planId,
+        bytes32 invoiceId,
+        address nativeToken
+    ) external payable nonReentrant whenNotPaused {
         Plan memory plan = plans[planId];
         require(plan.active, "plan not active");
 
-        address nativeToken = address(0); // we store native price feed under address(0)
+        require(tokenPriceFeed[nativeToken] != address(0), "price feed not set");
         uint256 required = _usdToTokenAmount(plan.priceUsd, nativeToken);
 
         require(msg.value >= required, "insufficient native sent");
@@ -178,7 +184,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         // extend expiry
         _extendExpiry(user, planId, plan.duration);
 
-        emit SubscriptionPaid(msg.sender, user, planId, address(0), required, invoiceId, expiresAt[user][planId]);
+        emit SubscriptionPaid(msg.sender, user, planId, nativeToken, required, invoiceId, expiresAt[user][planId]);
     }
 
     // ------------------
