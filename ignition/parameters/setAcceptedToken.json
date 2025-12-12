@@ -1,9 +1,9 @@
 {
     "SetAcceptedTokenModule": {
       "contractAddress": "0x686c2613FDF9f82d20d03639B8C78ae064E2b0D4",
-      "token": "0x1A26d803C2e796601794f8C5609549643832702C",
+      "token": "0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867",
       "accept": true,
-      "priceFeed": "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
+      "priceFeed": "0x143db3CEEfbdfe5631aDD3E50f7614B6ba708BA7",
       "owner": "0x8358847c2D38F97F2Fc20cfA83F61075C4BfD14A"
     }
   }
