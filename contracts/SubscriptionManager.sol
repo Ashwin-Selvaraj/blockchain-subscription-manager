@@ -53,8 +53,19 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     address public treasury; // where funds are forwarded
 
     // events
-    event PlanCreated(uint256 indexed planId, string name, uint256 priceUsd, uint256 duration);
-    event PlanUpdated(uint256 indexed planId, string name, uint256 priceUsd, uint256 duration, bool active);
+    event PlanCreated(
+        uint256 indexed planId,
+        string name,
+        uint256 priceUsd,
+        uint256 duration
+    );
+    event PlanUpdated(
+        uint256 indexed planId,
+        string name,
+        uint256 priceUsd,
+        uint256 duration,
+        bool active
+    );
     event SubscriptionPaid(
         address indexed payer,
         address indexed user,
@@ -86,11 +97,21 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         emit TreasuryUpdated(t);
     }
 
-    function createPlan(uint256 planId, string calldata name, uint256 priceUsd, uint256 duration) external onlyOwner {
+    function createPlan(
+        uint256 planId,
+        string calldata name,
+        uint256 priceUsd,
+        uint256 duration
+    ) external onlyOwner {
         require(bytes(plans[planId].name).length == 0, "plan already exists");
         require(duration > 0, "duration=0");
         require(bytes(name).length > 0, "name empty");
-        plans[planId] = Plan({name: name, priceUsd: priceUsd, duration: duration, active: true});
+        plans[planId] = Plan({
+            name: name,
+            priceUsd: priceUsd,
+            duration: duration,
+            active: true
+        });
         emit PlanCreated(planId, name, priceUsd, duration);
     }
 
@@ -104,11 +125,20 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         require(bytes(plans[planId].name).length > 0, "plan not found");
         require(duration > 0, "duration=0");
         require(bytes(name).length > 0, "name empty");
-        plans[planId] = Plan({name: name, priceUsd: priceUsd, duration: duration, active: active});
+        plans[planId] = Plan({
+            name: name,
+            priceUsd: priceUsd,
+            duration: duration,
+            active: active
+        });
         emit PlanUpdated(planId, name, priceUsd, duration, active);
     }
 
-    function setAcceptedToken(address token, bool accept, address priceFeed) external onlyOwner {
+    function setAcceptedToken(
+        address token,
+        bool accept,
+        address priceFeed
+    ) external onlyOwner {
         acceptedToken[token] = accept;
         tokenPriceFeed[token] = priceFeed; // priceFeed may be zero for tokens where frontend supplies token amount
         emit TokenAccepted(token, accept, priceFeed);
@@ -148,7 +178,15 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         // extend expiry for user
         _extendExpiry(user, planId, plan.duration);
 
-        emit SubscriptionPaid(msg.sender, user, planId, token, tokenAmount, invoiceId, expiresAt[user][planId]);
+        emit SubscriptionPaid(
+            msg.sender,
+            user,
+            planId,
+            token,
+            tokenAmount,
+            invoiceId,
+            expiresAt[user][planId]
+        );
     }
 
     /**
@@ -165,7 +203,10 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         Plan memory plan = plans[planId];
         require(plan.active, "plan not active");
 
-        require(tokenPriceFeed[nativeToken] != address(0), "price feed not set");
+        require(
+            tokenPriceFeed[nativeToken] != address(0),
+            "price feed not set"
+        );
         uint256 required = _usdToTokenAmount(plan.priceUsd, nativeToken);
 
         require(msg.value >= required, "insufficient native sent");
@@ -184,7 +225,15 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         // extend expiry
         _extendExpiry(user, planId, plan.duration);
 
-        emit SubscriptionPaid(msg.sender, user, planId, nativeToken, required, invoiceId, expiresAt[user][planId]);
+        emit SubscriptionPaid(
+            msg.sender,
+            user,
+            planId,
+            nativeToken,
+            required,
+            invoiceId,
+            expiresAt[user][planId]
+        );
     }
 
     // ------------------
@@ -195,13 +244,19 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
      * @dev returns token amount required for USD price
      * token == address(0) means native token feed stored under address(0)
      */
-    function getTokenAmountForPlan(uint256 planId, address token) public view returns (uint256) {
+    function getTokenAmountForPlan(
+        uint256 planId,
+        address token
+    ) public view returns (uint256) {
         Plan memory plan = plans[planId];
         require(plan.active, "plan inactive");
         return _usdToTokenAmountView(plan.priceUsd, token);
     }
 
-    function hasActiveSubscription(address user, uint256 planId) external view returns (bool) {
+    function hasActiveSubscription(
+        address user,
+        uint256 planId
+    ) external view returns (bool) {
         return expiresAt[user][planId] >= block.timestamp;
     }
 
@@ -213,7 +268,15 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
 
         _extendExpiry(msg.sender, planId, plan.duration);
 
-        emit SubscriptionPaid(msg.sender, msg.sender, planId, address(0), 0, bytes32(0), expiresAt[msg.sender][planId]);
+        emit SubscriptionPaid(
+            msg.sender,
+            msg.sender,
+            planId,
+            address(0),
+            0,
+            bytes32(0),
+            expiresAt[msg.sender][planId]
+        );
     }
 
     function isActive(uint256 planId) external view returns (bool) {
@@ -224,14 +287,21 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     // INTERNAL
     // ------------------
 
-    function _extendExpiry(address user, uint256 planId, uint256 duration) internal {
+    function _extendExpiry(
+        address user,
+        uint256 planId,
+        uint256 duration
+    ) internal {
         uint256 current = expiresAt[user][planId];
         uint256 base = current > block.timestamp ? current : block.timestamp;
         expiresAt[user][planId] = base + duration;
     }
 
     // INTERNAL view version: does not modify state
-    function _usdToTokenAmountView(uint256 priceUsd, address token) internal view returns (uint256) {
+    function _usdToTokenAmountView(
+        uint256 priceUsd,
+        address token
+    ) internal view returns (uint256) {
         if (priceUsd == 0) {
             return 0;
         }
@@ -246,14 +316,18 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
         uint8 feedDecimals = aggregator.decimals();
         uint8 tokenDecimals = _tokenDecimals(token);
 
-        uint256 numerator = uint256(priceUsd) * _pow10(feedDecimals + tokenDecimals);
+        uint256 numerator = uint256(priceUsd) *
+            _pow10(feedDecimals + tokenDecimals);
         uint256 denominator = uint256(answer) * _pow10(usdDecimals);
 
         return numerator / denominator;
     }
 
     // Non-view helper used in payable flow (simple wrapper)
-    function _usdToTokenAmount(uint256 priceUsd, address token) internal view returns (uint256) {
+    function _usdToTokenAmount(
+        uint256 priceUsd,
+        address token
+    ) internal view returns (uint256) {
         return _usdToTokenAmountView(priceUsd, token);
     }
 
@@ -265,7 +339,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     }
 
     function _pow10(uint256 exp) internal pure returns (uint256) {
-        return 10**exp;
+        return 10 ** exp;
     }
 
     // ------------------
@@ -273,7 +347,11 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     // ------------------
 
     // withdraw ERC20 stuck in contract (should not normally happen)
-    function withdrawERC20(address token, uint256 amount, address to) external onlyOwner {
+    function withdrawERC20(
+        address token,
+        uint256 amount,
+        address to
+    ) external onlyOwner {
         IERC20(token).safeTransfer(to, amount);
     }
 
