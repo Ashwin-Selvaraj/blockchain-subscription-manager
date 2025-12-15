@@ -59,7 +59,7 @@ export default defineConfig({
     bscTestnet: {
       type: "http",
       chainType: "l1",
-      url: "https://cold-muddy-moon.bsc-testnet.quiknode.pro/91b6fb765255d79e84c9cd9f65ece85ef8b0c0ec/",
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       accounts: [configVariable("PRIVATE_KEY")],
     },
   },

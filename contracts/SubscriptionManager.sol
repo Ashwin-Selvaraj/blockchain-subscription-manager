@@ -197,17 +197,14 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     function payWithNative(
         address user,
         uint256 planId,
-        bytes32 invoiceId,
-        address nativeToken
+        bytes32 invoiceId
     ) external payable nonReentrant whenNotPaused {
         Plan memory plan = plans[planId];
         require(plan.active, "plan not active");
 
-        require(
-            tokenPriceFeed[nativeToken] != address(0),
-            "price feed not set"
-        );
-        uint256 required = _usdToTokenAmount(plan.priceUsd, nativeToken);
+        // native token feed is stored at address(0)
+        require(tokenPriceFeed[address(0)] != address(0), "price feed not set");
+        uint256 required = _usdToTokenAmount(plan.priceUsd, address(0));
 
         require(msg.value >= required, "insufficient native sent");
 
@@ -229,7 +226,7 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
             msg.sender,
             user,
             planId,
-            nativeToken,
+            address(0),
             required,
             invoiceId,
             expiresAt[user][planId]
