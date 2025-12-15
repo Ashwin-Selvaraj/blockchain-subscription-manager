@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_30-6fa7f81886c33c50411d78eaa576c72ccd62fa62",
+  "solcVersion": "0.8.30",
+  "solcLongVersion": "0.8.30+commit.73712a01",
+  "userSourceNameMap": {
+    "contracts/interfaces/IERC20Ignition.sol": "project/contracts/interfaces/IERC20Ignition.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "prague",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/interfaces/IERC20Ignition.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.30;\n\ninterface IERC20Ignition {\n    function approve(address spender, uint256 amount) external returns (bool);\n    function balanceOf(address owner) external view returns (uint256);\n    function allowance(\n        address owner,\n        address spender\n    ) external view returns (uint256);\n    function decimals() external view returns (uint8);\n}\n"
+      }
+    }
+  }
+}

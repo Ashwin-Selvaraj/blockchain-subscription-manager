@@ -1,0 +1,10 @@
+{
+    "PayWithERC20Module": {
+        "contractAddress": "0x7134186f19b77Eae5b9592C5794491a1bb7fE223",
+        "planId": 0,
+        "invoiceId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "user": "0x8358847c2D38F97F2Fc20cfA83F61075C4BfD14A",
+        "token": "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06",
+        "maxTokenAmount": 0
+    }
+}

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Ashwin-Selvaraj/blockchain-subscription-manager#readme",
   "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^4.0.3",
     "@nomicfoundation/hardhat-ignition": "^3.0.5",
     "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.1",
     "@nomicfoundation/hardhat-verify": "^3.0.7",
