@@ -1,4 +1,4 @@
 {
-  "PayWithERC20Module#IERC20Ignition": "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06",
-  "PayWithERC20Module#SubscriptionManager": "0x7134186f19b77Eae5b9592C5794491a1bb7fE223"
+  "CreatePlanModule#SubscriptionManager": "0x7134186f19b77Eae5b9592C5794491a1bb7fE223",
+  "UpdatePlanModule#SubscriptionManager": "0x7134186f19b77Eae5b9592C5794491a1bb7fE223"
 }

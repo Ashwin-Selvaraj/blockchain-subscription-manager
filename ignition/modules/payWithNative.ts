@@ -11,10 +11,10 @@ const PayWithNativeModule = buildModule("PayWithNativeModule", (m) => {
   // Fetch required native amount on-chain at deploy time
   const required = m.staticCall(contract, "getTokenAmountForPlan", [planId, nativeToken]);
 
-  m.call(contract, "payWithNative", [user, planId, invoiceId], { value: required });
+  m.call(contract, "payWithNative", [user, planId, invoiceId, nativeToken], { value: required });
   return { contract };
 });
-
+  
 export default PayWithNativeModule;
 
 

@@ -2,8 +2,8 @@
   "UpdatePlanModule": {
     "contractAddress": "0x7134186f19b77Eae5b9592C5794491a1bb7fE223",
     "planId": 0,
-    "name": "Pro",
-    "priceUsd": 200,
+    "name": "Free",
+    "priceUsd": 0,
     "duration": 2592000,
     "active": true
   }

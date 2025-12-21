@@ -9,7 +9,7 @@ const SetAcceptedTokenModule = buildModule("SetAcceptedTokenModule", (m) => {
 
   const contract = m.contractAt("SubscriptionManager", contractAddress);
   m.call(contract, "setAcceptedToken", [token, accept, priceFeed], { from: owner });
-  return { contract };
+  return { contract };  
 });
 
 export default SetAcceptedTokenModule;
