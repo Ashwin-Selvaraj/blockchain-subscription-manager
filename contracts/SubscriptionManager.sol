@@ -366,6 +366,5 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     function unpause() external onlyOwner {
         _unpause();
     }
-
     receive() external payable {}
 }
