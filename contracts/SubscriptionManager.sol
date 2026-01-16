@@ -368,4 +368,3 @@ contract SubscriptionManager is Ownable, ReentrancyGuard, Pausable {
     }
     receive() external payable {}
 }
-
